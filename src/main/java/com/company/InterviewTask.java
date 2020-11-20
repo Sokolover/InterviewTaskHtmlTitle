@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Optional;
 
 public class InterviewTask {
     private static final String OPEN_TITLE_TAG = "<title>";
@@ -16,13 +17,15 @@ public class InterviewTask {
     }
 
     public static String findUrlTitle(String[] args) throws IOException {
-        URL url = null;
+        Optional<URL> url = Optional.empty();
         try {
-            url = new URL(args[0]);
+            url = Optional.of(new URL(args[0]));
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            System.err.println("Wrong URL");
         }
-        InputStream inputStream = url.openStream();
+        InputStream inputStream;
+        inputStream = url.orElseThrow(
+                () -> new IOException("Can't open stream for such a URL")).openStream();
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
         try (BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
             String line;
